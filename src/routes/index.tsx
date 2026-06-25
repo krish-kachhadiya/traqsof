@@ -77,7 +77,7 @@ function FadeUp({
       initial={{ opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}
@@ -715,9 +715,9 @@ function Hero() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{
             type: "spring",
-            stiffness: 80,
-            damping: 14,
-            mass: 1.2,
+            stiffness: 120,
+            damping: 18,
+            mass: 0.8,
           }}
           className="w-full max-w-5xl mt-16"
         >

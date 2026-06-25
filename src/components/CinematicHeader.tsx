@@ -30,7 +30,7 @@ export function CinematicHeader() {
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: 0.08,
+        staggerChildren: 0.04,
       },
     },
   };
@@ -42,8 +42,8 @@ export function CinematicHeader() {
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 260,
-        damping: 20,
+        stiffness: 350,
+        damping: 25,
       },
     },
   };
