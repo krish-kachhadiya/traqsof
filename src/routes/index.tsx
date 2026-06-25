@@ -1,6 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CinematicHeader } from "../components/CinematicHeader";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import bulkUpload from "../assets/bulk-upload.png";
+import automatedReport from "../assets/automated-report.png";
+import gpsVerified from "../assets/gps-verefied.png";
+import complaintSystem from "../assets/complaint-system.png";
+import teamManagement from "../assets/team-management.png";
+import aiPowered from "../assets/ai-powered.png";
+import offlineMode from "../assets/offline-mode.png";
+import logo from "../assets/logo.png";
 import {
   motion,
   useInView as useFmInView,
@@ -45,16 +53,6 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Traqsof — AI Outdoor Advertising Intelligence" },
-      {
-        name: "description",
-        content:
-          "GPS-verified campaign monitoring, AI compliance detection, and enterprise-grade outdoor advertising intelligence for India's top agencies.",
-      },
-    ],
-  }),
   component: TraqsofLanding,
 });
 
@@ -784,43 +782,43 @@ const CAPABILITIES_DATA = [
     icon: Upload,
     title: "Bulk Site Upload",
     text: "Import 10,000 sites in seconds. CSV, Excel, or API — Traqsof auto-normalizes addresses, dedupes records, and geocodes with sub-meter accuracy.",
-    image: "/src/assets/bulk-upload.png"
+    image: bulkUpload
   },
   {
     icon: FileText,
     title: "Automated Reports",
     text: "White-labeled PDF reports sent to clients daily, weekly, or on milestones. Branded, signed, and verifiable in one click.",
-    image: "/src/assets/automated-report.png"
+    image: automatedReport
   },
   {
     icon: MapPin,
     title: "GPS-Verified Captures",
     text: "Every photo is stamped with sub-5m GPS, device ID, timezone, and tamper-evident hash. Disputes end before they start.",
-    image: "/src/assets/gps-verefied.png"
+    image: gpsVerified
   },
   {
     icon: MessageSquareWarning,
     title: "Compliance System",
     text: "End-to-end ticket flow from field to vendor to client. SLA timers, escalations, and audit logs out of the box.",
-    image: "/src/assets/complaint-system.png"
+    image: complaintSystem
   },
   {
     icon: Users,
     title: "Team Management",
     text: "Role-based access for ops, vendors, and clients. Geo-fenced assignments ensure crews are exactly where they need to be.",
-    image: "/src/assets/team-management.png"
+    image: teamManagement
   },
   {
     icon: Brain,
     title: "AI Detection",
     text: "Vision models flag obstructed faces, wrong creatives, lighting failures, and unauthorized over-postings automatically.",
-    image: "/src/assets/ai-powered.png"
+    image: aiPowered
   },
   {
     icon: WifiOff,
     title: "Offline Mode",
     text: "Field crews capture in dead zones. Everything syncs intact the moment a signal returns — no lost evidence, ever.",
-    image: "/src/assets/offline-mode.png"
+    image: offlineMode
   },
 ];
 
@@ -831,113 +829,49 @@ function Capabilities() {
     offset: ["start start", "end end"],
   });
 
-  const activeIndex = useTransform(scrollYProgress, [0, 1], [0, 6]);
+  const x = useTransform(scrollYProgress, [0, 1], ["0%", "-80%"]);
+  const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <div ref={containerRef} className="relative h-[800vh] w-full bg-[#1A050A]">
-      <div className="sticky top-0 h-screen w-full flex justify-center overflow-hidden">
-        <div className="absolute top-20 md:top-28 left-0 w-full flex justify-center z-50 pointer-events-none">
-          <h2 className="text-center text-[#EE3038] tracking-[0.2em] text-sm font-bold uppercase">
+    <div ref={containerRef} className="relative h-[500vh] w-full bg-[#0a0a0a]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-center">
+        <div className="absolute top-10 left-10 z-50 pointer-events-none">
+          <h2 className="text-[#EE3038] tracking-[0.2em] text-sm font-bold uppercase">
             Capabilities
           </h2>
         </div>
 
+        <div className="absolute top-1/2 left-[10%] right-0 h-2 -translate-y-1/2 z-10">
+          <div className="w-full h-full bg-gray-800 rounded-full" />
+          <motion.div
+            style={{ scaleX }}
+            className="absolute left-0 top-0 h-full bg-[#EE3038] rounded-full shadow-[0_0_20px_rgba(238,48,56,0.8)] origin-left min-w-[1rem]"
+          />
+        </div>
+
         <motion.div
-          animate={{
-            y: [0, -5, 0],
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="relative w-full max-w-6xl mx-auto px-6 mt-48"
+          style={{ x }}
+          className="flex absolute top-0 left-[10%] h-full z-20"
         >
-          <div className="grid grid-cols-2 gap-8 h-[500px]">
-            <div className="relative overflow-hidden p-8 flex items-center justify-center">
-              {CAPABILITIES_DATA.map((item, index) => (
-                <motion.div
-                  key={`image-${index}`}
-                  style={{
-                    x: useTransform(
-                      activeIndex,
-                      (v) => {
-                        const diff = index - v;
-                        if (Math.abs(diff) < 0.5) return 0;
-                        return diff > 0 ? "100%" : "-100%";
-                      }
-                    ),
-                    scale: useTransform(
-                      activeIndex,
-                      (v) => {
-                        const diff = index - v;
-                        if (Math.abs(diff) < 0.5) return 1;
-                        return 0.9;
-                      }
-                    ),
-                    opacity: useTransform(
-                      activeIndex,
-                      (v) => {
-                        const diff = index - v;
-                        if (Math.abs(diff) < 0.5) return 1;
-                        return 0;
-                      }
-                    ),
-                  }}
-                  className="absolute inset-0 flex items-center justify-center"
-                >
-                  <div className="w-full h-full p-4 rounded-3xl overflow-hidden shadow-2xl bg-white">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                </motion.div>
-              ))}
+          {CAPABILITIES_DATA.map((item, index) => (
+            <div key={index} className="w-[40vw] shrink-0 h-full relative">
+              <motion.div
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: false, margin: "0px -40% 0px 0px" }}
+                className={`absolute left-0 ${
+                  index % 2 === 0 ? "bottom-[55%]" : "top-[55%]"
+                }`}
+              >
+                <h3 className="text-4xl text-white font-bold">
+                  {item.title}
+                </h3>
+                <p className="text-gray-400 mt-4 max-w-sm">
+                  {item.text}
+                </p>
+              </motion.div>
             </div>
-            <div className="relative overflow-hidden p-8 flex items-center justify-center">
-              {CAPABILITIES_DATA.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <motion.div
-                    key={`text-${index}`}
-                    style={{
-                      x: useTransform(
-                        activeIndex,
-                        (v) => {
-                          const diff = index - v;
-                          if (Math.abs(diff) < 0.5) return 0;
-                          return diff > 0 ? "100%" : "-100%";
-                        }
-                      ),
-                      opacity: useTransform(
-                        activeIndex,
-                        (v) => {
-                          const diff = index - v;
-                          if (Math.abs(diff) < 0.5) return 1;
-                          return 0;
-                        }
-                      ),
-                    }}
-                    className="absolute inset-0 flex flex-col justify-center p-8"
-                  >
-                    <div className="grid h-16 w-16 place-items-center rounded-xl bg-[#EE3038] text-white shadow-lg mb-6">
-                      <Icon className="h-8 w-8" />
-                    </div>
-                    <motion.h3
-                      className="text-3xl font-bold mb-4 bg-gradient-to-r from-white via-gray-300 to-gray-500 bg-clip-text text-transparent cursor-pointer hover:scale-105 transition-transform duration-500 hover:drop-shadow-[0_0_15px_rgba(238,48,56,0.5)]"
-                    >
-                      {item.title}
-                    </motion.h3>
-                    <p className="text-base text-white/70 leading-relaxed">
-                      {item.text}
-                    </p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+          ))}
         </motion.div>
       </div>
     </div>
@@ -1188,7 +1122,6 @@ function PhoneFrame({ active }: { active: number }) {
 }
 
 function Solution() {
-  const [active, setActive] = useState(0);
   return (
     <section
       id="solutions"
@@ -1216,65 +1149,43 @@ function Solution() {
         </FadeUp>
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {SOL_TABS.map((t, i) => {
-            const isActive = i === active;
-            return (
-              <motion.div
-                key={t.title}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                onClick={() => setActive(i)}
-                className={`relative group cursor-pointer rounded-3xl p-8 transition-all duration-500 ${
-                  isActive
-                    ? "bg-gradient-to-br from-[#EE3038] to-red-700 text-white shadow-2xl shadow-red-500/30 scale-105"
-                    : "bg-white border-2 border-gray-100 hover:border-[#EE3038]/30 hover:shadow-xl"
-                }`}
-              >
-                {/* Number badge */}
-                <div
-                  className={`absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
-                    isActive
-                      ? "bg-white text-[#EE3038] shadow-lg"
-                      : "bg-gray-100 text-gray-600 group-hover:bg-[#EE3038] group-hover:text-white"
-                  }`}
-                >
-                  0{i + 1}
-                </div>
+          {SOL_TABS.map((t, i) => (
+            <motion.div
+              key={t.title}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="relative group cursor-pointer rounded-3xl p-8 transition-all duration-800 ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-white border-2 border-gray-100 hover:bg-gradient-to-br hover:from-[#E85A5F] hover:to-[#EE3038] hover:border-[#EE3038] hover:shadow-[0_8px_32px_rgba(238,48,56,0.2)] hover:-translate-y-1 hover:scale-[1.02]"
+            >
+              {/* Number badge */}
+              <div className="absolute -top-4 -right-4 w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-800 ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-gray-100 text-gray-600 group-hover:bg-white group-hover:text-[#EE3038]">
+                0{i + 1}
+              </div>
 
-                {/* Icon placeholder */}
-                <div
-                  className={`w-16 h-16 rounded-2xl mb-6 flex items-center justify-center transition-all ${
-                    isActive
-                      ? "bg-white/20 backdrop-blur-sm"
-                      : "bg-gray-100 group-hover:bg-[#EE3038]/10"
-                  }`}
-                >
-                  {i === 0 && <Upload className={`w-8 h-8 ${isActive ? "text-white" : "text-gray-600 group-hover:text-[#EE3038]"}`} />}
-                  {i === 1 && <FileText className={`w-8 h-8 ${isActive ? "text-white" : "text-gray-600 group-hover:text-[#EE3038]"}`} />}
-                  {i === 2 && <Scan className={`w-8 h-8 ${isActive ? "text-white" : "text-gray-600 group-hover:text-[#EE3038]"}`} />}
-                  {i === 3 && <CheckCircle className={`w-8 h-8 ${isActive ? "text-white" : "text-gray-600 group-hover:text-[#EE3038]"}`} />}
-                </div>
+              {/* Icon placeholder */}
+              <div className="w-16 h-16 rounded-2xl mb-6 flex items-center justify-center transition-all duration-800 ease-[cubic-bezier(0.25,0.1,0.25,1)] bg-gray-100 group-hover:bg-white/20 backdrop-blur-sm">
+                {i === 0 && <Upload className="w-8 h-8 text-gray-600 group-hover:text-white transition-colors duration-800" />}
+                {i === 1 && <FileText className="w-8 h-8 text-gray-600 group-hover:text-white transition-colors duration-800" />}
+                {i === 2 && <Scan className="w-8 h-8 text-gray-600 group-hover:text-white transition-colors duration-800" />}
+                {i === 3 && <CheckCircle className="w-8 h-8 text-gray-600 group-hover:text-white transition-colors duration-800" />}
+              </div>
 
-                {/* Title */}
-                <h3 className={`text-2xl font-bold mb-4 ${isActive ? "text-white" : "text-gray-900"}`}>
-                  {t.title}
-                </h3>
+              {/* Title */}
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 group-hover:text-white transition-colors duration-800">
+                {t.title}
+              </h3>
 
-                {/* Description */}
-                <p className={`text-sm leading-relaxed ${isActive ? "text-white/90" : "text-gray-600"}`}>
-                  {t.body}
-                </p>
+              {/* Description */}
+              <p className="text-sm leading-relaxed text-gray-600 group-hover:text-white/90 transition-colors duration-800">
+                {t.body}
+              </p>
 
-                {/* Hover effect indicator */}
-                {!isActive && (
-                  <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ArrowUpRight className="w-5 h-5 text-[#EE3038]" />
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
+              {/* Hover effect indicator */}
+              <div className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-800">
+                <ArrowUpRight className="w-5 h-5 text-white" />
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         {/* Feature highlights */}
@@ -1856,22 +1767,19 @@ function Footer() {
   return (
     <footer data-theme="dark" className="bg-[#1A050A] text-white">
       <div className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid grid-cols-2 gap-10 sm:grid-cols-4">
-          <div className="col-span-2 sm:col-span-1">
-            <div className="flex items-center gap-2">
-              <div className="grid h-8 w-8 place-items-center rounded-md bg-[#EE3038] font-display font-bold">
-                T
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-10 items-start">
+          <div className="sm:col-span-1">
+            <div className="flex flex-col items-start">
+              <img src={logo} alt="Traqsof" className="h-10 w-auto" />
+              <p className="mt-4 text-sm text-white/60 max-w-[280px]">
+                AI-powered outdoor advertising intelligence for India's most
+                demanding teams.
+              </p>
+              <div className="mt-6 flex items-center gap-3">
+                <Bell className="h-4 w-4 text-[#EE3038]" />
+                <ShieldCheck className="h-4 w-4 text-[#EE3038]" />
+                <Smartphone className="h-4 w-4 text-[#EE3038]" />
               </div>
-              <span className="font-display text-xl font-bold">Traqsof</span>
-            </div>
-            <p className="mt-4 max-w-xs text-sm text-white/60">
-              AI-powered outdoor advertising intelligence for India's most
-              demanding teams.
-            </p>
-            <div className="mt-6 flex items-center gap-3">
-              <Bell className="h-4 w-4 text-[#EE3038]" />
-              <ShieldCheck className="h-4 w-4 text-[#EE3038]" />
-              <Smartphone className="h-4 w-4 text-[#EE3038]" />
             </div>
           </div>
           {cols.map((c) => (

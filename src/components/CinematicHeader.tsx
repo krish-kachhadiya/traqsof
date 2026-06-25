@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import logo from "../assets/logo.png";
 
 const NAV = [
   { label: "Platform", href: "#platform" },
@@ -62,14 +63,9 @@ export function CinematicHeader() {
         <motion.a
           variants={itemVariants}
           href="#top"
-          className="flex items-center gap-2"
+          className="flex items-center"
         >
-          <div className="grid h-8 w-8 place-items-center rounded-md bg-[#EE3038] text-white font-display font-bold">
-            T
-          </div>
-          <span className="font-display text-xl font-bold tracking-tight">
-            Traqsof
-          </span>
+          <img src={logo} alt="Traqsof" className="h-14 w-auto" />
         </motion.a>
 
         {/* Links */}
