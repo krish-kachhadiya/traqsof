@@ -12,6 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+  nitro: true, // <-- THIS IS THE MAGIC LINE TO FIX VERCEL
   vite: {
     publicDir: "public",
   },
