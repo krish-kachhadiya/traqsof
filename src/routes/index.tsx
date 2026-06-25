@@ -1096,7 +1096,7 @@ function Results() {
   );
 }
 
-/* ───────── Solution — vertical tabs + phone ───────── */
+/* ───────── Solution — vertical tabs + phone ───────── **/
 const SOL_TABS = [
   {
     title: "GPS-Verified Monitoring",
