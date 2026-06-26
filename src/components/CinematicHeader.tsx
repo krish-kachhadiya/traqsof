@@ -10,6 +10,7 @@ const NAV = [
   { label: "Solutions", href: "#solutions" },
   { label: "Compare", href: "#compare" },
   { label: "Pricing", href: "#pricing" },
+  { label: "FAQ's", href: "#faq" },
 ];
 
 export function CinematicHeader() {

@@ -9,6 +9,13 @@ import teamManagement from "../assets/team-management.png";
 import aiPowered from "../assets/ai-powered.png";
 import offlineMode from "../assets/offline-mode.png";
 import logo from "../assets/logo.png";
+import favicon from "../assets/favicon.png";
+import captureImg from "../assets/capture.png";
+import cloudUploadImg from "../assets/cloud upload.png";
+import aiProcessingImg from "../assets/ai processing.png";
+import dashboardImg from "../assets/dashboard.png";
+import mobileFrame from "../assets/mobile_transparent.png";
+
 import {
   motion,
   useInView as useFmInView,
@@ -859,9 +866,8 @@ function Capabilities() {
                 initial={{ opacity: 0, x: 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: false, margin: "0px -40% 0px 0px" }}
-                className={`absolute left-0 ${
-                  index % 2 === 0 ? "bottom-[55%]" : "top-[55%]"
-                }`}
+                className={`absolute left-0 ${index % 2 === 0 ? "bottom-[55%]" : "top-[55%]"
+                  }`}
               >
                 <h3 className="text-4xl text-white font-bold">
                   {item.title}
@@ -1317,20 +1323,63 @@ function Benefits() {
   );
 }
 
-/* ───────── Workflow (zig-zag timeline) ───────── */
+/* ───────── Workflow (Interactive Phone Preview) ───────── */
 const FLOW = [
-  { n: "01", t: "Capture", d: "Field crew snaps GPS-locked photo", Icon: Camera },
-  { n: "02", t: "Cloud Sync", d: "Auto-uploads with tamper hash", Icon: Cloud },
-  { n: "03", t: "AI Analysis", d: "Vision model verifies creative", Icon: Scan },
-  { n: "04", t: "Dashboard Update", d: "Client sees proof in real time", Icon: BarChart3 },
+  {
+    n: "01",
+    t: "Photo Capture",
+    d: "Field crew snaps GPS-locked, tamper-proof photos of campaign layouts on the street.",
+    img: captureImg,
+  },
+  {
+    n: "02",
+    t: "Cloud Upload",
+    d: "Photos are uploaded automatically to cloud storage with secure metadata hashes.",
+    img: cloudUploadImg,
+  },
+  {
+    n: "03",
+    t: "AI Processing",
+    d: "Advanced vision intelligence parses features and validates compliance instantly.",
+    img: aiProcessingImg,
+  },
+  {
+    n: "04",
+    t: "Dashboard Update",
+    d: "Clean data updates the real-time client panel with visual proof of execution.",
+    img: dashboardImg,
+  },
 ];
 
 function Workflow() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Auto-advance function
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % FLOW.length);
+    }, 3500);
+  };
+
+  useEffect(() => {
+    startTimer();
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
+  }, []);
+
+  const handleCardClick = (index: number) => {
+    setActiveIndex(index);
+    startTimer(); // reset timer on click
+  };
+
   return (
-    <section data-theme="dark" className="bg-[#1A050A] py-28 text-white">
+    <section id="workflow" data-theme="dark" className="bg-[#1A050A] py-28 text-white overflow-hidden">
       <div className="mx-auto max-w-7xl px-6">
         <FadeUp>
-          <div className="mx-auto max-w-3xl text-center">
+          <div className="mx-auto max-w-3xl text-center mb-20">
             <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#EE3038]">
               Workflow
             </div>
@@ -1341,37 +1390,93 @@ function Workflow() {
           </div>
         </FadeUp>
 
-        <div className="relative mt-20">
-          {/* connector line */}
-          <div className="absolute left-0 right-0 top-12 hidden h-0.5 bg-gradient-to-r from-transparent via-[#EE3038] to-transparent shadow-[0_0_18px_rgba(238,48,56,0.6)] lg:block" />
-          <div className="relative grid grid-cols-1 gap-12 lg:grid-cols-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Column: 2x2 Grid of Step Cards */}
+          <div className="lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6">
             {FLOW.map((f, i) => {
-              const Icon = f.Icon;
+              const isActive = activeIndex === i;
               return (
-                <FadeUp key={f.n} delay={i * 0.1}>
-                  <div className="flex flex-col items-center text-center">
-                    <div className="relative z-10 grid h-24 w-24 place-items-center rounded-full border-4 border-white bg-[#EE3038] text-white shadow-[0_0_25px_rgba(238,48,56,0.4)]">
-                      <Icon className="h-9 w-9" />
+                <FadeUp key={f.n} delay={i * 0.05}>
+                  <div
+                    onClick={() => handleCardClick(i)}
+                    className={`group relative p-8 rounded-[1.8rem] cursor-pointer select-none transition-all duration-500 border flex flex-col justify-between h-[210px] ${isActive
+                      ? "bg-[#EE3038] border-[#EE3038] text-white scale-[1.05] shadow-[0_15px_30px_rgba(238,48,56,0.3)] z-10"
+                      : "bg-[#111111] border-white/5 text-gray-400 hover:border-white/10 hover:bg-[#151515]"
+                      }`}
+                  >
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <span
+                          className={`font-display text-xs font-bold tracking-widest ${isActive ? "text-white/80" : "text-[#EE3038]"
+                            }`}
+                        >
+                          STEP {f.n}
+                        </span>
+                        <span
+                          className={`text-2xl font-bold font-display leading-none ${isActive ? "text-white/30" : "text-white/10 group-hover:text-white/20 transition-colors"
+                            }`}
+                        >
+                          {f.n}
+                        </span>
+                      </div>
+                      <h3
+                        className={`mt-4 text-xl sm:text-2xl font-bold font-display ${isActive ? "text-white" : "text-white group-hover:text-[#EE3038] transition-colors"
+                          }`}
+                      >
+                        {f.t}
+                      </h3>
                     </div>
-                    <div className="mt-4 font-display text-xs font-bold tracking-[0.2em] text-[#EE3038]">
-                      STEP {f.n}
-                    </div>
-                    <div className="mt-1 font-display text-2xl font-bold">
-                      {f.t}
-                    </div>
-                    <div className="mt-2 max-w-[200px] text-sm text-white/60">
+                    <p
+                      className={`text-sm leading-relaxed ${isActive ? "text-white/95" : "text-gray-400/80"
+                        }`}
+                    >
                       {f.d}
-                    </div>
+                    </p>
                   </div>
                 </FadeUp>
               );
             })}
+          </div>
+
+          {/* Right Column: Sticky Phone Container */}
+          <div className="lg:col-span-5 flex justify-center items-center">
+            <div className="relative w-[340px] h-[670px] mx-auto select-none pointer-events-none md:sticky md:top-32">
+              {/* Opaque PNG Phone Frame overlay */}
+              <img
+                src={mobileFrame}
+                alt="Phone Frame"
+                className="absolute inset-0 w-full h-full object-fill pointer-events-none z-20"
+              />
+
+              {/* Underlying screen container positioned within screen frame area */}
+              <div
+                className="absolute top-[3.49%] left-[9.69%] w-[80.63%] h-[91.04%] bg-[#1A050A] rounded-[1rem] overflow-hidden z-10 shadow-[0_0_40px_rgba(0,0,0,0.8)]"
+              >
+                {FLOW.map((f, i) => {
+                  const isActive = activeIndex === i;
+                  return (
+                    <img
+                      key={f.n}
+                      src={f.img}
+                      alt={f.t}
+                      className={`absolute top-0 left-0 w-full h-full object-fill transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0"
+                        }`}
+                    />
+                  );
+                })}
+                {/* Glossy glass glare reflection overlay */}
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-tr from-white/[0.02] via-transparent to-white/[0.08] z-20 mix-blend-screen" />
+                {/* Inner shadow for screen depth */}
+                <div className="absolute inset-0 pointer-events-none rounded-[1rem] shadow-[inset_0_0_20px_rgba(0,0,0,0.6)] z-20" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </section>
   );
 }
+
 
 /* ───────── Compare Table ───────── */
 const COMPARE_ROWS = [
@@ -1659,9 +1764,11 @@ function FAQ() {
       <div className="mx-auto max-w-7xl px-6">
         <FadeUp>
           <div className="mx-auto mb-12 max-w-3xl text-center">
-            <DualH className="text-3xl drop-shadow-sm sm:text-4xl">
-              Frequently asked{" "}
-              <span className="text-[#EE3038]">questions.</span>
+            <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#EE3038]">
+              FAQs
+            </div>
+            <DualH className="text-4xl sm:text-5xl lg:text-6xl">
+              Frequently asked <span className="text-[#EE3038]">questions.</span>
             </DualH>
           </div>
         </FadeUp>
@@ -1670,40 +1777,74 @@ function FAQ() {
             const isOpen = openIdx === i;
             return (
               <FadeUp key={q} delay={i * 0.05}>
-                <button
-                  onClick={() => setOpenIdx(isOpen ? -1 : i)}
-                  className={`w-full rounded-2xl border p-5 text-left transition-all ${isOpen
-                    ? "border-[#EE3038]/40 bg-[#EE3038]/5"
-                    : "border-white/10 bg-white/[0.02] hover:bg-white/5"
-                    }`}
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="font-display text-base font-bold sm:text-lg">
-                      {q}
-                    </div>
+                <div className="flex flex-col gap-3">
+                  {/* Question (Right Side) */}
+                  <div className="flex items-start justify-end gap-3 w-full">
                     <div
-                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full transition-colors ${isOpen ? "bg-[#EE3038] text-white" : "bg-white/10 text-white"
+                      onClick={() => setOpenIdx(isOpen ? -1 : i)}
+                      className={`rounded-[2rem] px-5 py-3.5 max-w-[75%] sm:max-w-[80%] text-left font-medium shadow-sm transition-all duration-300 cursor-pointer select-none ${isOpen
+                        ? "bg-white text-black border border-[#EE3038]"
+                        : "bg-white text-black border border-transparent hover:bg-gray-50"
                         }`}
                     >
-                      {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                      <p className="text-sm md:text-base leading-relaxed">{q}</p>
                     </div>
+                    <button
+                      onClick={() => setOpenIdx(isOpen ? -1 : i)}
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-all duration-300 cursor-pointer ${isOpen
+                        ? "bg-[#EE3038] text-white opacity-100"
+                        : "bg-white/[0.04] text-white/25 hover:bg-white/15 hover:text-white/60"
+                        }`}
+                      aria-label={isOpen ? "Collapse FAQ" : "Expand FAQ"}
+                    >
+                      {isOpen ? <Minus className="h-5 w-5" /> : <Plus className="h-5 w-5" />}
+                    </button>
                   </div>
-                  <AnimatePresence>
+
+                  {/* Answer (Left Side - Hidden by Default) */}
+                  <AnimatePresence initial={false}>
                     {isOpen && (
                       <motion.div
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden text-sm text-white/70"
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                        className="overflow-hidden"
                       >
-                        <p className="pt-4">{a}</p>
+                        <div className="flex items-start justify-start gap-3 w-full pr-10 md:pr-12 mt-1">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A050A] border border-[#EE3038]/30 p-2 shadow-[0_0_10px_rgba(238,48,56,0.25)] overflow-hidden">
+                            <img src={favicon} alt="Q" className="h-full w-full object-contain" />
+                          </div>
+                          <div className="bg-white text-[#EE3038] rounded-[2rem] px-5 py-3.5 max-w-[75%] sm:max-w-[80%] text-left font-normal border border-[#EE3038] shadow-sm transition-all duration-300">
+                            <p className="text-sm md:text-base leading-relaxed">{a}</p>
+                          </div>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </button>
+                </div>
               </FadeUp>
             );
           })}
+
+          {/* Call to Action (Bottom Right) */}
+          <FadeUp delay={FAQS.length * 0.05 + 0.1}>
+            <div className="flex items-center justify-end gap-3 w-full mt-6">
+              <a
+                href="#cta"
+                className="bg-[#EE3038] hover:bg-[#d62b32] text-white rounded-full px-6 py-3.5 font-semibold shadow-md hover:shadow-[0_4px_12px_rgba(238,48,56,0.3)] transition-all duration-300 text-sm md:text-base cursor-pointer"
+              >
+                Still have questions?
+              </a>
+              <a
+                href="#cta"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EE3038] hover:bg-[#d62b32] text-white shadow-md hover:shadow-[0_4px_12px_rgba(238,48,56,0.3)] transition-all duration-300 cursor-pointer"
+                aria-label="Ask questions"
+              >
+                <ArrowRight className="h-5 w-5" />
+              </a>
+            </div>
+          </FadeUp>
         </div>
       </div>
     </section>

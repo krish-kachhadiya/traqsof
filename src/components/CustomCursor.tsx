@@ -41,7 +41,7 @@ export function CustomCursor() {
         isHovered ? "bg-white mix-blend-difference" : "bg-[#EE3038]"
       }`}
       style={{
-        transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%) scale(${isHovered ? 8 : 1})`,
+        transform: `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%) scale(${isHovered ? 6 : 1})`,
       }}
     />
   );
