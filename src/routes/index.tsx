@@ -40,11 +40,13 @@ import {
   Cloud,
   FileText,
   LayoutGrid,
+  Mail,
   MapPin,
   Megaphone,
   Menu,
   MessageSquareWarning,
   Minus,
+  Phone,
   Plus,
   Quote,
   Scan,
@@ -1649,16 +1651,18 @@ function Trusted() {
 const TIERS = [
   {
     name: "Starter",
-    price: "₹24,999",
-    period: "/mo",
     desc: "For boutique agencies getting started.",
+    priceMonthly: "₹24,999",
+    priceAnnually: "₹19,999",
+    period: "/mo",
     features: ["Up to 500 sites", "GPS verification", "Email reports", "1 admin seat"],
   },
   {
     name: "Standard",
-    price: "₹74,999",
-    period: "/mo",
     desc: "For growing teams shipping at scale.",
+    priceMonthly: "₹74,999",
+    priceAnnually: "₹59,999",
+    period: "/mo",
     features: [
       "Up to 5,000 sites",
       "AI compliance detection",
@@ -1670,9 +1674,10 @@ const TIERS = [
   },
   {
     name: "Professional",
-    price: "Custom",
-    period: "",
     desc: "Enterprise control across regions.",
+    priceMonthly: "Custom",
+    priceAnnually: "Custom",
+    period: "",
     features: ["Unlimited sites", "SSO & SCIM", "API + webhooks", "Dedicated CSM", "99.95% SLA"],
   },
 ];
@@ -1685,7 +1690,109 @@ const FAQS = [
   ["How is billing handled?", "Annual or monthly, per-site or per-seat. Cancel anytime within the first 14 days, no questions asked."],
 ];
 
+function PricingCard({ t, isAnnual, i }: { t: typeof TIERS[number]; isAnnual: boolean; i: number }) {
+  const price = isAnnual ? t.priceAnnually : t.priceMonthly;
+  const hasDiscount = isAnnual && t.priceAnnually !== "Custom";
+
+  // Spotlight coordinates tracking
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setCoords({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  return (
+    <FadeUp key={t.name} delay={i * 0.1}>
+      <div
+        onMouseMove={handleMouseMove}
+        className={`group relative h-full rounded-3xl border p-8 flex flex-col justify-between transition-all duration-500 hover:-translate-y-1.5 overflow-hidden active:scale-95 select-none ${
+          t.featured
+            ? "scale-[1.04] border-[#EE3038] bg-gradient-to-b from-[#EE3038]/15 to-[#EE3038]/5 shadow-[0_0_60px_-10px_rgba(238,48,56,0.55)] hover:shadow-[0_20px_50px_rgba(238,48,56,0.22)] z-10"
+            : "border-gray-200 bg-gray-50 hover:border-gray-300 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)]"
+        }`}
+      >
+        {/* Cursor spotlight background overlay */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"
+          style={{
+            background: t.featured
+              ? `radial-gradient(350px circle at ${coords.x}px ${coords.y}px, rgba(238, 48, 56, 0.12), transparent 80%)`
+              : `radial-gradient(350px circle at ${coords.x}px ${coords.y}px, rgba(255, 255, 255, 0.7), transparent 80%)`,
+          }}
+        />
+
+        {t.featured && (
+          <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-[#EE3038] px-3.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white border border-white/10 z-10">
+            Most popular
+          </div>
+        )}
+
+        <div className="relative z-10 w-full">
+          <div className="flex justify-between items-center mb-1">
+            <div className="font-display text-xl font-bold text-gray-900">{t.name}</div>
+            {hasDiscount && (
+              <span className="text-[10px] font-semibold text-[#EE3038] bg-[#EE3038]/10 border border-[#EE3038]/20 rounded-full px-2.5 py-0.5">
+                Save 20%
+              </span>
+            )}
+          </div>
+          <div className="text-sm text-gray-600 leading-relaxed mb-6">{t.desc}</div>
+          
+          <div className="flex items-baseline gap-1 mb-6 border-b border-gray-100 pb-6 overflow-hidden">
+            <div className="relative h-[56px] flex items-baseline">
+              <AnimatePresence mode="wait">
+                <motion.span
+                  key={price}
+                  initial={{ y: 15, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  exit={{ y: -15, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: "easeOut" }}
+                  className="inline-block font-display text-5xl font-bold tracking-tight text-gray-900"
+                >
+                  {price}
+                </motion.span>
+              </AnimatePresence>
+            </div>
+            {t.period && (
+              <span className="text-sm text-gray-500 font-medium select-none">
+                {t.period}
+              </span>
+            )}
+          </div>
+
+          <ul className="space-y-3.5 text-sm">
+            {t.features.map((f) => (
+              <li key={f} className="flex items-start gap-2.5 text-gray-700">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#EE3038]" />
+                <span className="leading-tight">{f}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <a
+          href="#cta"
+          className={`relative z-10 mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-all duration-300 cursor-pointer ${
+            t.featured
+              ? "bg-[#EE3038] text-white hover:bg-[#ff464e] shadow-[0_5px_15px_rgba(238,48,56,0.3)]"
+              : "border border-gray-300 text-gray-900 hover:bg-gray-100"
+          }`}
+        >
+          Get started
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 duration-300" />
+        </a>
+      </div>
+    </FadeUp>
+  );
+}
+
 function Pricing() {
+  const [isAnnual, setIsAnnual] = useState(false);
+  
   return (
     <section
       id="pricing"
@@ -1694,7 +1801,7 @@ function Pricing() {
     >
       <div className="mx-auto max-w-7xl px-6">
         <FadeUp>
-          <div className="mx-auto mb-16 max-w-3xl text-center">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
             <div className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-[#EE3038]">
               Enterprise Pricing
             </div>
@@ -1705,47 +1812,52 @@ function Pricing() {
           </div>
         </FadeUp>
 
+        {/* Interactive Billing Toggle */}
+        <div className="flex justify-center mb-16">
+          <div className="relative flex items-center p-1 bg-gray-100 rounded-full border border-gray-200/60 shadow-inner">
+            <button
+              onClick={() => setIsAnnual(false)}
+              className={`relative px-6 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 cursor-pointer ${
+                !isAnnual ? "text-white" : "text-gray-500 hover:text-gray-800"
+              }`}
+            >
+              {!isAnnual && (
+                <motion.div
+                  layoutId="billing-pill-light"
+                  className="absolute inset-0 bg-[#EE3038] rounded-full z-0"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10">Monthly</span>
+            </button>
+            <button
+              onClick={() => setIsAnnual(true)}
+              className={`relative px-6 py-2.5 text-sm font-semibold rounded-full transition-all duration-300 flex items-center gap-2 cursor-pointer ${
+                isAnnual ? "text-white" : "text-gray-500 hover:text-gray-800"
+              }`}
+            >
+              {isAnnual && (
+                <motion.div
+                  layoutId="billing-pill-light"
+                  className="absolute inset-0 bg-[#EE3038] rounded-full z-0"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <span className="relative z-10 flex items-center gap-1.5">
+                Annually
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                  isAnnual ? "bg-white/20 text-white" : "bg-[#EE3038]/10 text-[#EE3038]"
+                }`}>
+                  Save 20%
+                </span>
+              </span>
+            </button>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
           {TIERS.map((t, i) => (
-            <FadeUp key={t.name} delay={i * 0.1}>
-              <div
-                className={`group relative h-full rounded-3xl border p-8 transition-all duration-300 active:scale-95 ${t.featured
-                  ? "scale-[1.04] border-[#EE3038] bg-gradient-to-b from-[#EE3038]/15 to-[#EE3038]/5 shadow-[0_0_60px_-10px_rgba(238,48,56,0.55)]"
-                  : "border-gray-200 bg-gray-50 hover:border-gray-300"
-                  }`}
-              >
-                {t.featured && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-[#EE3038] px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white">
-                    Most popular
-                  </div>
-                )}
-                <div className="font-display text-xl font-bold">{t.name}</div>
-                <div className="mt-1 text-sm text-gray-600">{t.desc}</div>
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="font-display text-5xl font-bold tracking-tight">
-                    {t.price}
-                  </span>
-                  <span className="text-sm text-gray-500">{t.period}</span>
-                </div>
-                <ul className="mt-6 space-y-3 text-sm">
-                  {t.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-gray-700">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#EE3038]" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <a
-                  href="#cta"
-                  className={`mt-8 inline-flex w-full items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-all ${t.featured
-                    ? "bg-[#EE3038] text-white hover:bg-[#ff464e]"
-                    : "border border-gray-300 text-gray-900 hover:bg-gray-100"
-                    }`}
-                >
-                  Get started <ArrowRight className="h-4 w-4" />
-                </a>
-              </div>
-            </FadeUp>
+            <PricingCard key={t.name} t={t} isAnnual={isAnnual} i={i} />
           ))}
         </div>
       </div>
@@ -1755,11 +1867,35 @@ function Pricing() {
 
 function FAQ() {
   const [openIdx, setOpenIdx] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Lock background scroll when modal is active
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitted(true);
+    setTimeout(() => {
+      setIsModalOpen(false);
+      setIsSubmitted(false);
+    }, 2000);
+  };
+
   return (
     <section
       id="faq"
       data-theme="dark"
-      className="bg-[#1A050A] py-28 text-white"
+      className="bg-[#1A050A] py-28 text-white relative"
     >
       <div className="mx-auto max-w-7xl px-6">
         <FadeUp>
@@ -1782,7 +1918,7 @@ function FAQ() {
                   <div className="flex items-start justify-end gap-3 w-full">
                     <div
                       onClick={() => setOpenIdx(isOpen ? -1 : i)}
-                      className={`rounded-[2rem] px-5 py-3.5 max-w-[75%] sm:max-w-[80%] text-left font-medium shadow-sm transition-all duration-300 cursor-pointer select-none ${isOpen
+                      className={`rounded-[2rem] rounded-tr-none px-5 py-3.5 max-w-[75%] sm:max-w-[80%] text-left font-medium shadow-sm transition-all duration-300 cursor-pointer select-none ${isOpen
                         ? "bg-white text-black border border-[#EE3038]"
                         : "bg-white text-black border border-transparent hover:bg-gray-50"
                         }`}
@@ -1815,7 +1951,7 @@ function FAQ() {
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#1A050A] border border-[#EE3038]/30 p-2 shadow-[0_0_10px_rgba(238,48,56,0.25)] overflow-hidden">
                             <img src={favicon} alt="Q" className="h-full w-full object-contain" />
                           </div>
-                          <div className="bg-white text-[#EE3038] rounded-[2rem] px-5 py-3.5 max-w-[75%] sm:max-w-[80%] text-left font-normal border border-[#EE3038] shadow-sm transition-all duration-300">
+                          <div className="bg-white text-[#EE3038] rounded-[2rem] rounded-tl-none px-5 py-3.5 max-w-[75%] sm:max-w-[80%] text-left font-normal border border-[#EE3038] shadow-sm transition-all duration-300">
                             <p className="text-sm md:text-base leading-relaxed">{a}</p>
                           </div>
                         </div>
@@ -1832,12 +1968,22 @@ function FAQ() {
             <div className="flex items-center justify-end gap-3 w-full mt-6">
               <a
                 href="#cta"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsModalOpen(true);
+                  setIsSubmitted(false);
+                }}
                 className="bg-[#EE3038] hover:bg-[#d62b32] text-white rounded-full px-6 py-3.5 font-semibold shadow-md hover:shadow-[0_4px_12px_rgba(238,48,56,0.3)] transition-all duration-300 text-sm md:text-base cursor-pointer"
               >
                 Still have questions?
               </a>
               <a
                 href="#cta"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsModalOpen(true);
+                  setIsSubmitted(false);
+                }}
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EE3038] hover:bg-[#d62b32] text-white shadow-md hover:shadow-[0_4px_12px_rgba(238,48,56,0.3)] transition-all duration-300 cursor-pointer"
                 aria-label="Ask questions"
               >
@@ -1847,6 +1993,226 @@ function FAQ() {
           </FadeUp>
         </div>
       </div>
+
+      {/* Overlay Modal (Megn Template Replica) */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div 
+            onClick={() => setIsModalOpen(false)}
+            className="fixed inset-0 z-40 overflow-y-auto bg-[#1A050A] pointer-events-auto cursor-pointer"
+          >
+            {/* Living Wave Animations Background */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+              {/* Wave 1 (Deep Wine) */}
+              <motion.div
+                className="absolute bottom-0 left-0 w-[200%] h-full opacity-60"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ ease: "linear", duration: 35, repeat: Infinity }}
+              >
+                <svg className="w-full h-full" viewBox="0 0 2880 1000" preserveAspectRatio="none" fill="none">
+                  <path d="M0,700 Q360,550 720,700 T1440,700 Q1800,550 2160,700 T2880,700 L2880,1000 L0,1000 Z" fill="#3D0A11" />
+                </svg>
+              </motion.div>
+
+              {/* Wave 2 (Crimson Wine) */}
+              <motion.div
+                className="absolute bottom-0 left-0 w-[200%] h-full opacity-40"
+                animate={{ x: ["-50%", "0%"] }}
+                transition={{ ease: "linear", duration: 25, repeat: Infinity }}
+              >
+                <svg className="w-full h-full" viewBox="0 0 3200 1000" preserveAspectRatio="none" fill="none">
+                  <path d="M0,750 Q400,620 800,750 T1600,750 Q2000,620 2400,750 T3200,750 L3200,1000 L0,1000 Z" fill="#5C0D17" />
+                </svg>
+              </motion.div>
+
+              {/* Wave 3 (Brand Crimson Accent) */}
+              <motion.div
+                className="absolute bottom-0 left-0 w-[200%] h-full opacity-35"
+                animate={{ x: ["0%", "-50%"] }}
+                transition={{ ease: "linear", duration: 45, repeat: Infinity }}
+              >
+                <svg className="w-full h-full" viewBox="0 0 2560 1000" preserveAspectRatio="none" fill="none">
+                  <path d="M0,800 Q320,710 640,800 T1280,800 Q1600,710 1920,800 T2560,800 L2560,1000 L0,1000 Z" fill="#EE3038" fillOpacity="0.3" />
+                </svg>
+              </motion.div>
+            </div>
+
+            {/* Centered Sizing and Centering Container */}
+            <div className="min-h-full flex items-center justify-center p-4 sm:p-8 md:py-24 max-w-4xl mx-auto pointer-events-none">
+              {/* Centered Content Card Wrapper (Intercepts clicks inside form area) */}
+              <motion.div
+                initial={{ scale: 0.95, opacity: 0, y: 30 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.95, opacity: 0, y: 30 }}
+                transition={{ type: "spring", duration: 0.4 }}
+                onClick={(e) => e.stopPropagation()}
+                className="relative z-10 w-full flex flex-col items-center gap-12 pointer-events-auto cursor-auto"
+              >
+                {/* Main Header */}
+                <div className="text-center flex flex-col gap-3 mt-16 md:mt-20">
+                  <h2 className="font-display text-5xl md:text-6xl lg:text-7xl font-extrabold text-white">
+                    Contact us
+                  </h2>
+                  <p className="font-sans text-sm md:text-base text-gray-300 max-w-lg mx-auto leading-relaxed select-none">
+                    Our platform works seamlessly with your workflows, helping you verify every outdoor site and track compliance without skipping a beat.
+                  </p>
+                </div>
+
+                {/* Form Card (Frosted Glassmorphic Container) */}
+                <div className="w-full bg-white/10 backdrop-blur-xl rounded-[2rem] p-8 md:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] border border-white/15 flex flex-col gap-6">
+                  {isSubmitted ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="flex flex-col items-center justify-center text-center py-16 gap-4 font-sans"
+                    >
+                      <div className="h-12 w-12 rounded-full bg-[#EE3038]/10 text-[#EE3038] border border-[#EE3038]/30 flex items-center justify-center">
+                        <Check className="h-6 w-6 stroke-[3]" />
+                      </div>
+                      <h3 className="font-display text-2xl font-bold text-white">Message Sent!</h3>
+                      <p className="text-sm text-gray-300 leading-relaxed max-w-xs select-none">
+                        Thank you for reaching out. We will get back to you shortly.
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <>
+                      <h3 className="font-display text-xl font-bold text-white tracking-tight">
+                        Fill the form
+                      </h3>
+
+                      <form onSubmit={handleSubmit} className="flex flex-col gap-5 font-sans">
+                        {/* Row 1: First Name & Last Name (Side-by-side grid) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-1.5 text-left">
+                            <label className="text-xs font-semibold text-white/60 select-none">
+                              First Name
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="John"
+                              className="w-full rounded-xl px-4 py-3.5 bg-white/5 border border-white/10 text-white caret-[#EE3038] placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#EE3038]/30 text-sm cursor-text font-medium transition-all"
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1.5 text-left">
+                            <label className="text-xs font-semibold text-white/60 select-none">
+                              Last Name
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Doe"
+                              className="w-full rounded-xl px-4 py-3.5 bg-white/5 border border-white/10 text-white caret-[#EE3038] placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#EE3038]/30 text-sm cursor-text font-medium transition-all"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Row 2: Email Address (Full Width) */}
+                        <div className="flex flex-col gap-1.5 text-left">
+                          <label className="text-xs font-semibold text-white/60 select-none">
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            required
+                            placeholder="john.doe@example.com"
+                            className="w-full rounded-xl px-4 py-3.5 bg-white/5 border border-white/10 text-white caret-[#EE3038] placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#EE3038]/30 text-sm cursor-text font-medium transition-all"
+                          />
+                        </div>
+
+                        {/* Row 3: Message (Textarea Full Width) */}
+                        <div className="flex flex-col gap-1.5 text-left">
+                          <label className="text-xs font-semibold text-white/60 select-none">
+                            Message
+                          </label>
+                          <textarea
+                            required
+                            rows={4}
+                            placeholder="How can we help you?"
+                            className="w-full rounded-xl px-4 py-3.5 bg-white/5 border border-white/10 text-white caret-[#EE3038] placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-[#EE3038]/30 text-sm cursor-text font-medium transition-all resize-none"
+                          />
+                        </div>
+
+                        {/* CTA Submit Button */}
+                        <button
+                          type="submit"
+                          className="mt-2 w-full bg-[#EE3038] hover:bg-[#ff464e] text-white rounded-xl py-3.5 font-bold font-sans shadow-md hover:shadow-lg transition-all duration-300 active:scale-[0.98] text-center cursor-pointer text-sm"
+                        >
+                          Send message
+                        </button>
+                      </form>
+                    </>
+                  )}
+                </div>
+
+                {/* Reach Us Section (Side-by-side grid below the card) */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full text-left">
+                  {/* Left Column: Reach us detail card */}
+                  <div className="bg-[#FFE1E3]/20 border border-[#EE3038]/10 rounded-[2rem] p-8 flex flex-col gap-6 shadow-sm">
+                    <h4 className="font-display text-2xl font-bold text-white">
+                      Reach us
+                    </h4>
+                    
+                    <div className="flex flex-col gap-4 font-sans text-sm text-gray-300">
+                      <a href="mailto:support@traqsof.com" className="flex items-center gap-3 hover:text-white transition-colors group">
+                        <div className="h-10 w-10 rounded-full bg-[#EE3038]/10 text-[#EE3038] border border-[#EE3038]/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Mail className="h-5 w-5" />
+                        </div>
+                        support@traqsof.com
+                      </a>
+
+                      <a href="tel:+918001234567" className="flex items-center gap-3 hover:text-white transition-colors group">
+                        <div className="h-10 w-10 rounded-full bg-[#EE3038]/10 text-[#EE3038] border border-[#EE3038]/20 flex items-center justify-center group-hover:scale-105 transition-transform">
+                          <Phone className="h-5 w-5" />
+                        </div>
+                        +91 (800) 123-4567
+                      </a>
+
+                      <div className="flex items-start gap-3 group">
+                        <div className="h-10 w-10 rounded-full bg-[#EE3038]/10 text-[#EE3038] border border-[#EE3038]/20 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+                          <MapPin className="h-5 w-5" />
+                        </div>
+                        <span className="leading-relaxed">
+                          Traqsof Technologies, Bandra Kurla Complex, Mumbai, MH 400051, India
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Other office cards stacked */}
+                  <div className="flex flex-col gap-4 justify-between">
+                    {/* Sydney Office */}
+                    <div className="bg-[#FFE1E3]/20 border border-[#EE3038]/10 rounded-[2rem] p-6 flex items-start gap-4 shadow-sm h-full">
+                      <div className="h-10 w-10 rounded-full bg-[#EE3038]/10 text-[#EE3038] border border-[#EE3038]/20 flex items-center justify-center shrink-0">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div className="font-sans text-sm text-gray-300">
+                        <div className="font-semibold text-white mb-1">Sydney Office</div>
+                        <div className="leading-relaxed text-xs">
+                          88 Pixel Street, 3rd Floor, Surry Hills, NSW 2010, Australia
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* London Office */}
+                    <div className="bg-[#FFE1E3]/20 border border-[#EE3038]/10 rounded-[2rem] p-6 flex items-start gap-4 shadow-sm h-full">
+                      <div className="h-10 w-10 rounded-full bg-[#EE3038]/10 text-[#EE3038] border border-[#EE3038]/20 flex items-center justify-center shrink-0">
+                        <MapPin className="h-5 w-5" />
+                      </div>
+                      <div className="font-sans text-sm text-gray-300">
+                        <div className="font-semibold text-white mb-1">London Office</div>
+                        <div className="leading-relaxed text-xs">
+                          45 Tech Lane, Level 2, Shoreditch, London EC2A 3XY, UK
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
